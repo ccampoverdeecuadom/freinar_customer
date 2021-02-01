@@ -128,12 +128,7 @@ int numberLimit = 10;
                             ),
                           ),
                           SizedBox(height: 10.0),
-                          Visibility(
-                              visible: showDialogBox,
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: CircularProgressIndicator(),
-                              )),
+
                         ],
                       ),
                     ),
@@ -142,7 +137,7 @@ int numberLimit = 10;
                     bottom: 52.0,
                     width: MediaQuery.of(context).size.width,
                     child: Image.asset(
-                      "images/logos/Delivery.gif",
+                      "images/logos/Delivery2.gif",
                       width: MediaQuery.of(context).size.width, //footer image
                     ),
                   ),
@@ -251,6 +246,7 @@ int numberLimit = 10;
         var jsonData = jsonDecode(response.body);
         Toast.show(jsonData['message'], context, gravity: Toast.BOTTOM);
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        if(isoCode == null) isoCode = 'EC';
         prefs.setString("user_phone", '${isoCode}${phoneNumber}');
         prefs.setInt("number_limit", numberLimit);
         if (jsonData['status'] == 1) {

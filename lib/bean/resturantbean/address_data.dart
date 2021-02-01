@@ -10,6 +10,8 @@ class AddressData {
 
   AddressData();
 
+
+
   AddressData.fromJSON(Map<String, dynamic> jsonMap) {
     try {
       id = jsonMap['id'].toString();

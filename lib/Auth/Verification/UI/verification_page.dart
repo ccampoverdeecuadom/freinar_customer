@@ -233,7 +233,7 @@ class _OtpVerifyState extends State<OtpVerify> {
         'device_id': '${token}'
       }).then((response) {
         print('Response Body: - ${response.body}');
-        if (response.statusCode == 200) {
+        if (response.statusCode == 200 || true) { // quitar true para Produccion
           print('Response Body: - ${response.body}');
           var jsonData = jsonDecode(response.body);
           if (jsonData['status'] == 1) {

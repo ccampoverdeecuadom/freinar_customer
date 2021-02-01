@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:user/Maps/UI/location_page.dart';
 import 'package:user/NewParcel/orders.dart';
-import 'package:user/NewParcel/senderAddress.dart';
+import 'package:user/NewParcel/models/originDetail.dart';
 import 'package:user/Themes/colors.dart';
 import 'package:user/Themes/constantfile.dart';
 import 'package:user/baseurlp/baseurl.dart';
@@ -35,8 +35,7 @@ class AddressFromState extends State<AddressFrom> {
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TextEditingController houseNumberController = TextEditingController();
-  TextEditingController pinCodeController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
+  TextEditingController postalCodeController = TextEditingController();
   TextEditingController detailsAddressController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -47,7 +46,7 @@ class AddressFromState extends State<AddressFrom> {
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: apiKey);
 
   AddressData _addressSender;
-  SenderAddress senderAddress;
+  OriginDetail senderAddress;
 
   bool isFetchStore = false;
 
@@ -90,8 +89,7 @@ class AddressFromState extends State<AddressFrom> {
           for (int i = 0; i < value.length; i++) {
             if (value[i].locality != null && value[i].locality.length > 1) {
               setState(() {
-                cityController.text = value[i].locality;
-                pinCodeController.text = value[i].postalCode;
+                postalCodeController.text = value[i].postalCode;
               });
               break;
             }
@@ -594,7 +592,7 @@ class AddressFromState extends State<AddressFrom> {
                                 child: TextFormField(
                                   maxLines: 1,
                                   enabled: false,
-                                  controller: pinCodeController,
+                                  controller: postalCodeController,
                                   textAlign: TextAlign.center,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
@@ -610,54 +608,7 @@ class AddressFromState extends State<AddressFrom> {
                           ],
                         ),
                       ),
-                      Expanded(
-                        flex: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                translate('city'),
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: black_color,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Card(
-                              elevation: 2,
-                              color: kWhiteColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                              ),
-                              child: Container(
-                                height: 52,
-                                alignment: Alignment.center,
-                                width: MediaQuery.of(context).size.width,
-                                child: TextFormField(
-                                  maxLines: 1,
-                                  controller: cityController,
-                                  textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    hintText: 'City',
-                                    enabled: false,
-                                    border: InputBorder.none,
-                                    hintStyle: TextStyle(fontSize: 15),
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      
                     ],
                   ),
                 ],
@@ -675,8 +626,7 @@ class AddressFromState extends State<AddressFrom> {
               child: GestureDetector(
                 onTap: () {
                   if (houseNumberController.text != null && houseNumberController.text.isNotEmpty &&
-                      pinCodeController.text != null && pinCodeController.text.isNotEmpty &&
-                      cityController.text != null && cityController.text.isNotEmpty &&
+                      postalCodeController.text != null && postalCodeController.text.isNotEmpty &&
                       detailsAddressController.text != null && detailsAddressController.text.isNotEmpty &&
                       secondaryStreetController.text != null && secondaryStreetController.text.isNotEmpty &&
                       mainStreetController.text != null && mainStreetController.text.isNotEmpty &&
@@ -684,15 +634,14 @@ class AddressFromState extends State<AddressFrom> {
                       nameController.text != null && nameController.text.isNotEmpty &&
                       lat != null && lat != 0.0 &&
                       lng != null && lng != 0.0) {
-                    senderAddress = SenderAddress(lat, lng,
-                        houseNumberController,
-                        pinCodeController,
-                        cityController,
-                        detailsAddressController,
-                        secondaryStreetController,
-                        mainStreetController,
-                        phoneController,
-                        nameController);
+                    senderAddress = OriginDetail(lat, lng,
+                        houseNumberController.text,
+                        postalCodeController.text,
+                        detailsAddressController.text,
+                        secondaryStreetController.text,
+                        mainStreetController.text,
+                        phoneController.text,
+                        nameController.text);
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -745,7 +694,7 @@ class AddressFromState extends State<AddressFrom> {
       onError: (response) {
         print('${response.errorMessage}');
       },
-      language: "en",
+      language: "es",
     ).then((value) {
       displayPrediction(value);
     }).catchError((e) {
@@ -778,14 +727,13 @@ class AddressFromState extends State<AddressFrom> {
         print('${value[i].locality}');
         if (value[i].locality != null && value[i].locality.length > 1) {
           setState(() {
-            cityController.text = value[i].locality;
-            pinCodeController.text = value[i].postalCode;
+            postalCodeController.text = value[i].postalCode;
             currentAddress =
                 currentAddress.replaceAll('${value[i].locality},', '');
-            currentAddress = currentAddress.replaceAll('${pinCodeController.text},', '');
+            currentAddress = currentAddress.replaceAll('${postalCodeController.text},', '');
             currentAddress =
                 currentAddress.replaceAll('${value[i].locality}', '');
-            currentAddress = currentAddress.replaceAll('${pinCodeController.text}', '');
+            currentAddress = currentAddress.replaceAll('${postalCodeController.text}', '');
             currentAddress =
                 currentAddress.replaceAll('${value[i].countryName}', '');
             detailsAddressController.text = currentAddress;

@@ -638,7 +638,7 @@ class AddressFromState extends State<AddressFrom> {
       onError: (response) {
         print('${response.errorMessage}');
       },
-      language: "en",
+      language: "es",
     ).then((value) {
       displayPrediction(value);
     }).catchError((e) {

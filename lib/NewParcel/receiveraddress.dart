@@ -13,8 +13,8 @@ import 'package:http/http.dart' as http;
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
 import 'package:user/Maps/UI/location_page.dart';
-import 'package:user/NewParcel/models/OrderDetails.dart';
-import 'package:user/NewParcel/senderAddress.dart';
+import 'package:user/NewParcel/models/Destination.dart';
+import 'package:user/NewParcel/models/originDetail.dart';
 import 'package:user/Themes/colors.dart';
 import 'package:user/Themes/constantfile.dart';
 import 'package:user/baseurlp/baseurl.dart';
@@ -23,12 +23,16 @@ import 'package:user/NewParcel/pharmacybean/chargelistuser.dart';
 import 'package:user/NewParcel/pharmacybean/parceladdress.dart';
 import 'package:user/bean/resturantbean/address_data.dart';
 
+import 'models/parcel.dart';
+
 class NewAddressTo extends StatefulWidget {
-  final SenderAddress senderAddress;
-  final void Function(OrderDetails) orderAdded;
+  final OriginDetail senderAddress;
+  final void Function(Destination, bool) orderAdded;
+  final bool isEditing;
+  final Destination destination;
 
 
-  NewAddressTo({Key key , this.senderAddress, this.orderAdded}): super(key: key);
+  NewAddressTo({Key key , this.senderAddress, this.orderAdded, this.isEditing, this.destination}): super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -46,6 +50,9 @@ class NewAddressToState extends State<NewAddressTo> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController mainStreetController = TextEditingController();
   TextEditingController secondaryStreetController = TextEditingController();
+  TextEditingController detailsPackageController = TextEditingController();
+  TextEditingController detailsAddressController = TextEditingController();
+
 
   String currentAddress = '';
   AddressData _addressSender;
@@ -59,10 +66,32 @@ class NewAddressToState extends State<NewAddressTo> {
   dynamic charges = 0.0;
   dynamic city_id;
 
+  int orderIncrement;
+
   @override
   void initState() {
+    orderIncrement = 1;
     _getLocation();
     super.initState();
+    loadDestinationData();
+  }
+
+
+  loadDestinationData() {
+    if(!widget.isEditing) return;
+    setState(() {
+      _addressSender = widget.destination.location;
+    houseNumberController.text = widget.destination.houseNumber;
+    postalCodeController.text = widget.destination.postalCode;
+    addressController.text = widget.destination.addressReferences;
+    receiverNameController.text = widget.destination.name;
+    phoneController.text = widget.destination.phone;
+    mainStreetController.text = widget.destination.mainStreet;
+    secondaryStreetController.text = widget.destination.secondaryStreet;
+    detailsPackageController.text = widget.destination.parcels.length.toString();
+    detailsAddressController.text = widget.destination.addressReferences;
+    _getCameraMoveLocation(new LatLng(widget.destination.lat, widget.destination.lng), widget.destination.location.address);
+    });
   }
 
   void _getLocation() async {
@@ -352,26 +381,112 @@ class NewAddressToState extends State<NewAddressTo> {
                         padding: EdgeInsets.only(left: 10.0),
                         child: TextFormField(
                           maxLines: 5,
-                          readOnly: true,
-                          controller: addressController,
+                          controller: detailsAddressController,
                           decoration: InputDecoration(
                             hintText: 'Indique detalles referenciales',
                             hintStyle: TextStyle(fontSize: 15),
                             enabledBorder: InputBorder.none,
                             errorBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
-                          ),
-                          onChanged: (value) {
-                            if (value.length == 1) {
-                              getPlaces(context);
-                            }
-                          },
+                          )
                         ),
                       ),
                     ),
                 ],
               ),
             ),
+            Container(
+              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      translate('main_street'),
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: black_color,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Card(
+                    elevation: 2,
+                    color: kWhiteColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Container(
+                      height: 52,
+                      alignment: Alignment.centerLeft,
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: TextFormField(
+                        maxLines: 1,
+                        controller: mainStreetController,
+                        decoration: InputDecoration(
+                          hintText: translate('main_street'),
+                          hintStyle: TextStyle(fontSize: 15),
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(
+                      translate('secondary_street'),
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: black_color,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Card(
+                    elevation: 2,
+                    color: kWhiteColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: Container(
+                      height: 52,
+                      alignment: Alignment.centerLeft,
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: TextFormField(
+                        maxLines: 1,
+                        controller: secondaryStreetController,
+                        decoration: InputDecoration(
+                          hintText: translate('secondary_street'),
+                          hintStyle: TextStyle(fontSize: 15),
+                          enabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+
             SizedBox(
               height: 10,
             ),
@@ -423,6 +538,7 @@ class NewAddressToState extends State<NewAddressTo> {
             SizedBox(
               height: 10,
             ),
+
             Container(
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               child: Column(
@@ -455,7 +571,7 @@ class NewAddressToState extends State<NewAddressTo> {
                               color: kWhiteColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
+                                BorderRadius.all(Radius.circular(10)),
                               ),
                               child: Container(
                                 height: 52,
@@ -480,54 +596,6 @@ class NewAddressToState extends State<NewAddressTo> {
                           ],
                         ),
                       ),
-                      Expanded(
-                        flex: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                'Ciudad',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: black_color,
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Card(
-                              elevation: 2,
-                              color: kWhiteColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                              ),
-                              child: Container(
-                                height: 52,
-                                alignment: Alignment.center,
-                                width: MediaQuery.of(context).size.width,
-                                child: TextFormField(
-                                  maxLines: 1,
-                                  controller: cityController,
-                                  textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    hintText: 'Ciudad',
-                                    enabled: false,
-                                    border: InputBorder.none,
-                                    hintStyle: TextStyle(fontSize: 15),
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
                     ],
                   ),
                 ],
@@ -545,17 +613,20 @@ class NewAddressToState extends State<NewAddressTo> {
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               child: GestureDetector(
                 onTap: () {
-                  OrderDetails orderDetails = new OrderDetails(
-                      receiverNameController.text,
-                      phoneController.text,
-                      _addressSender,
-                      mainStreetController.text,
-                      secondaryStreetController.text,
+                  Destination orderDetails = new Destination(
+                    lat, lng,
                       houseNumberController.text,
                       postalCodeController.text,
-                      cityController.text,
-                      ['Pedido 1', 'Pedido 2']);
-                      widget.orderAdded(orderDetails);
+                      detailsAddressController.text,
+                      secondaryStreetController.text,
+                      mainStreetController.text,
+                      phoneController.text,
+                      receiverNameController.text,
+                      orderIncrement,
+                      [new Parcel("Zapatos", "Nike 54")],
+                       _addressSender);
+                      widget.orderAdded(orderDetails, widget.isEditing);
+                      orderIncrement++;
                  Navigator.of(context).pop();
                 },
                 child: Card(
@@ -595,7 +666,7 @@ class NewAddressToState extends State<NewAddressTo> {
       onError: (response) {
         print('${response.errorMessage}');
       },
-      language: "en",
+      language: "es",
     ).then((value) {
       displayPrediction(value);
     }).catchError((e) {

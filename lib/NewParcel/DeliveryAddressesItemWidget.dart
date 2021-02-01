@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:user/NewParcel/models/OrderDetails.dart';
+import 'package:user/NewParcel/models/Destination.dart';
 import 'package:user/Themes/colors.dart';
 
 
 // ignore: must_be_immutable
 class DeliveryAddressesItemWidget extends StatelessWidget {
   String heroTag;
-  final OrderDetails orderDetails;
+  final Destination orderDetails;
 
 
   DeliveryAddressesItemWidget({Key key, this.orderDetails}) : super(key: key);

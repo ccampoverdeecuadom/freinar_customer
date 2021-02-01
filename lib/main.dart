@@ -24,7 +24,7 @@ Future<void> main() async {
     statusBarColor: kMainTextColor.withOpacity(0.5),
   ));
   var delegate = await LocalizationDelegate.create(
-      fallbackLocale: 'en_US',
+      fallbackLocale: 'es',
       supportedLocales: ['en_US', 'es', 'fa']);
   runApp(LocalizedApp(delegate,
       Phoenix(child: (result != null && result) ? GoMarketHome() : GoMarket())));

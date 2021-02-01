@@ -1,7 +1,7 @@
 // var baseUrl = "https://thecodecafe.in/hybrid_resturant/api/";
 // var imageBaseUrl = "https://thecodecafe.in/hybrid_resturant/";
-var baseUrl = "http://192.168.100.22/api/";
-var imageBaseUrl  ="http://192.168.100.22/";
+var baseUrl = "http://192.168.100.51/api/";
+var imageBaseUrl  ="http://192.168.100.51/";
 var registerApi = baseUrl + "user_register";
 var verifyPhone = baseUrl + "verify_phone";
 var userRegistration = baseUrl + "checkuser";
