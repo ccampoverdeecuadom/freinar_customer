@@ -1,4 +1,4 @@
-package com.gomarketdemo.user
+package com.curier.customer
 
 import io.flutter.embedding.android.FlutterActivity
 

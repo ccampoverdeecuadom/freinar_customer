@@ -1,4 +1,4 @@
-package com.gomarketdemo.user;
+package com.curier.customer;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -13,7 +13,7 @@ public class ApplicationStatus extends FlutterApplication implements PluginRegis
     public void onCreate() {
         super.onCreate();
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setApplicationId("com.gomarketdemo.user") // Required for Analytics.
+                .setApplicationId("com.curier.customer") // Required for Analytics.
                 .setProjectId("gomarketdemo") // Required for Firebase Installations.
                 .setApiKey("AIzaSyB2kvOckQn8vJlqi8PPnbOzK5dCf-xg3eQ") // Required for Auth.
                 .build();

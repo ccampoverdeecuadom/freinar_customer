@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 import 'package:user/Components/entry_field.dart';
+import 'package:user/Pages/blockButtonWidget.dart';
 import 'package:user/Themes/colors.dart';
 import 'package:user/baseurlp/baseurl.dart';
 
@@ -41,8 +42,12 @@ class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _referalController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   var fullNameError = "";
+  bool hidePassword = true;
+
 
   bool showDialogBox = false;
   dynamic token = '';
@@ -58,7 +63,6 @@ class _RegisterFormState extends State<RegisterForm> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _referalController.dispose();
     super.dispose();
   }
 
@@ -95,35 +99,219 @@ class _RegisterFormState extends State<RegisterForm> {
                                 fontWeight: FontWeight.w600,
                                 fontSize: 25),
                           )),
-                      EntryField(
-                          textCapitalization: TextCapitalization.words,
-                          controller: _nameController,
-                          hint: 'Nombre Completo',
-                          enable: !showDialogBox,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                            borderSide: BorderSide(color: kHintColor, width: 1),
-                          )),
-                      //email textField
-                      EntryField(
-                          textCapitalization: TextCapitalization.none,
-                          controller: _emailController,
-                          hint: 'Email',
-                          enable: !showDialogBox,
-                          keyboardType: TextInputType.emailAddress,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                            borderSide: BorderSide(color: kHintColor, width: 1),
-                          )),
-                      EntryField(
-                          hint: 'Código de referencia',
-                          controller: _referalController,
-                          keyboardType: TextInputType.text,
-                          enable: !showDialogBox,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                            borderSide: BorderSide(color: kHintColor, width: 1),
-                          )),
+
+                      Form(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            TextFormField(
+                              controller: _nameController,
+                              keyboardType: TextInputType.text,
+                              validator: (input) => !input.contains(' ')
+                                  ? 'Debe ser Nombre Completo'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: 'Nombre Completo',
+                                labelStyle:
+                                TextStyle(color: Theme.of(context).accentColor),
+                                contentPadding: EdgeInsets.all(12),
+                                hintText: 'Nombre Completo',
+                                hintStyle: TextStyle(
+                                    color:
+                                    Theme.of(context).focusColor.withOpacity(0.7)),
+                                prefixIcon: Icon(Icons.person,
+                                    color: Theme.of(context).accentColor),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.5))),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+                            TextFormField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (input) => !input.contains('@')
+                                  ? 'Debe ser un email válido'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                labelStyle:
+                                TextStyle(color: Theme.of(context).accentColor),
+                                contentPadding: EdgeInsets.all(12),
+                                hintText: 'carlosc@ejemplo.com',
+                                hintStyle: TextStyle(
+                                    color:
+                                    Theme.of(context).focusColor.withOpacity(0.7)),
+                                prefixIcon: Icon(Icons.alternate_email,
+                                    color: Theme.of(context).accentColor),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.5))),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+                            TextFormField(
+                              controller: _phoneController,
+                              keyboardType: TextInputType.number,
+                              validator: (input) => input.length < 10
+                                  ? 'Debe ser un número de celular válido'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: 'Teléfono',
+                                labelStyle:
+                                TextStyle(color: Theme.of(context).accentColor),
+                                contentPadding: EdgeInsets.all(12),
+                                hintText: '0987654321',
+                                hintStyle: TextStyle(
+                                    color:
+                                    Theme.of(context).focusColor.withOpacity(0.7)),
+                                prefixIcon: Icon(Icons.phone,
+                                    color: Theme.of(context).accentColor),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.5))),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+                            TextFormField(
+                              obscureText: hidePassword,
+                              keyboardType: TextInputType.text,
+                              controller: _passwordController,
+                              validator: (input) => input.length < 3
+                                  ? 'Debe tener mas de 3 caracteres'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: 'Contraseña',
+                                labelStyle:
+                                TextStyle(color: Theme.of(context).accentColor),
+                                contentPadding: EdgeInsets.all(12),
+                                hintText: '••••••••••••',
+                                hintStyle: TextStyle(
+                                    color:
+                                    Theme.of(context).focusColor.withOpacity(0.7)),
+                                prefixIcon: Icon(Icons.lock_outline,
+                                    color: Theme.of(context).accentColor),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      hidePassword = !hidePassword;
+                                    });
+                                  },
+                                  color: Theme.of(context).focusColor,
+                                  icon: Icon(hidePassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off),
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.5))),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+                            TextFormField(
+                              obscureText: hidePassword,
+                              keyboardType: TextInputType.text,
+                              controller: _confirmPasswordController,
+                              validator: (input) => _passwordController.text == _confirmPasswordController.text
+                                  ? 'Las contraseñas deben conincidir'
+                                  : null,
+                              decoration: InputDecoration(
+                                labelText: 'Confirmar Contraseña',
+                                labelStyle:
+                                TextStyle(color: Theme.of(context).accentColor),
+                                contentPadding: EdgeInsets.all(12),
+                                hintText: '••••••••••••',
+                                hintStyle: TextStyle(
+                                    color:
+                                    Theme.of(context).focusColor.withOpacity(0.7)),
+                                prefixIcon: Icon(Icons.lock_outline,
+                                    color: Theme.of(context).accentColor),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      hidePassword = !hidePassword;
+                                    });
+                                  },
+                                  color: Theme.of(context).focusColor,
+                                  icon: Icon(hidePassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off),
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.5))),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Theme.of(context)
+                                            .focusColor
+                                            .withOpacity(0.2))),
+                              ),
+                            ),
+                            SizedBox(height: 30),
+
+                            SizedBox(height: 15),
+
+//                      SizedBox(height: 10),
+                          ],
+                        ),
+                      ),
+
                       SizedBox(
                         height: 20,
                       ),
@@ -186,8 +374,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       Toast.show("Enter valied Email address!", context,
                           gravity: Toast.BOTTOM);
                     } else {
-                      hitService(_nameController.text, _emailController.text,
-                          _referalController.text, context);
+                      hitService(_nameController.text, _emailController.text, _phoneController.text,
+                          _passwordController.text, _confirmPasswordController.text, context);
                     }
                   },
                   child: Container(
@@ -215,7 +403,7 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   void hitService(
-      String name, String email, String referal, BuildContext context) async {
+      String name, String email, String phone, String password, String confirmPass, BuildContext context) async {
     if (token != null && token.toString().length > 0) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var phoneNumber = prefs.getString('user_phone');
@@ -242,7 +430,7 @@ class _RegisterFormState extends State<RegisterForm> {
           token = value;
         });
         print('${value}');
-        hitService(name, email, referal, context);
+        hitService(name, email, phone, password, confirmPass, context);
       });
     }
   }

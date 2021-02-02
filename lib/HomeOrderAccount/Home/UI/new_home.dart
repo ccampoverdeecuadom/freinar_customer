@@ -60,8 +60,8 @@ class _NewHomeState extends State<NewHome> {
 
   @override
   void initState() {
-    _getLocation(context);
     super.initState();
+    _getLocation(context);
   }
 
   void _getLocation(context) async {
@@ -75,9 +75,9 @@ class _NewHomeState extends State<NewHome> {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best);
         // double lat = position.latitude;
-        double lat = 29.006057;
+        double lat = -0.160233;
         // double lng = position.longitude;
-        double lng = 77.027535;
+        double lng =  -78.473443;
         prefs.setString("lat", lat.toStringAsFixed(8));
         prefs.setString("lng", lng.toStringAsFixed(8));
         final coordinates = new Coordinates(lat, lng);
@@ -89,7 +89,7 @@ class _NewHomeState extends State<NewHome> {
               this.lat = lat;
               this.lng = lng;
               String city = '${value[0].locality}';
-              cityName = '${city.toUpperCase()} (${value[0].subLocality})';
+              cityName = '${city.toUpperCase()}';
             });
           } else if (value[0].subAdminArea != null &&
               value[0].subAdminArea.isNotEmpty) {
@@ -166,7 +166,10 @@ class _NewHomeState extends State<NewHome> {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60.0),
-          child: CustomAppBar(
+          child:
+          AppBar(title: Text('Freinar Express'), backgroundColor: kMainColor, )
+
+          /* CustomAppBar(
             leading: Padding(
               padding: const EdgeInsets.only(left: 20.0),
               child: Icon(
@@ -194,10 +197,10 @@ class _NewHomeState extends State<NewHome> {
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: kMainTextColor),
+                    color: kWhiteColor),
               ),
             ),
-          ),
+          ), */
         ),
         body: Container(
             width: MediaQuery.of(context).size.width,

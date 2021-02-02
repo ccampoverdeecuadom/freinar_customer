@@ -1,4 +1,4 @@
-package com.gomarketdemo.user;
+package com.curier.customer;
 
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.firebasemessaging.FirebaseMessagingPlugin;

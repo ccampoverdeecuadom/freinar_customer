@@ -3,6 +3,7 @@ import 'package:user/Auth/MobileNumber/UI/phone_number.dart';
 import 'package:user/Auth/Registration/UI/register_page.dart';
 import 'package:user/Auth/Verification/UI/verification_page.dart';
 import 'package:user/HomeOrderAccount/home_order_account.dart';
+import 'package:user/Pages/Login.dart';
 import 'package:user/Routes/routes.dart';
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -32,7 +33,7 @@ class LoginNavigator extends StatelessWidget {
           WidgetBuilder builder;
           switch (settings.name) {
             case LoginRoutes.loginRoot:
-              builder = (BuildContext _) => PhoneNumber_New();
+              builder = (BuildContext _) => Login();
               break;
             case LoginRoutes.registration:
               builder = (BuildContext _) => RegisterPage();
