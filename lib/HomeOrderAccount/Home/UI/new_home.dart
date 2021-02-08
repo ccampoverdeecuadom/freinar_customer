@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,7 @@ class NewHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return NewHome();
   }
+
 }
 
 class NewHome extends StatefulWidget {
@@ -42,6 +45,9 @@ class NewHome extends StatefulWidget {
 }
 
 class _NewHomeState extends State<NewHome> {
+  FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  String firebaseToken = '';
+
   String cityName = 'NO LOCATION SELECTED';
   var lat = 0.0;
   var lng = 0.0;
@@ -62,6 +68,8 @@ class _NewHomeState extends State<NewHome> {
   void initState() {
     super.initState();
     _getLocation(context);
+    firebaseMessagingListner();
+    listImage = [new BannerDetails(1, 'slides/slide 2.jpeg', 1)];
   }
 
   void _getLocation(context) async {
@@ -70,14 +78,14 @@ class _NewHomeState extends State<NewHome> {
     if (permission == LocationPermission.whileInUse ||
         permission == LocationPermission.always) {
       bool isLocationServiceEnableds =
-          await Geolocator.isLocationServiceEnabled();
+      await Geolocator.isLocationServiceEnabled();
       if (isLocationServiceEnableds) {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.best);
         // double lat = position.latitude;
         double lat = -0.160233;
         // double lng = position.longitude;
-        double lng =  -78.473443;
+        double lng = -78.473443;
         prefs.setString("lat", lat.toStringAsFixed(8));
         prefs.setString("lng", lng.toStringAsFixed(8));
         final coordinates = new Coordinates(lat, lng);
@@ -165,9 +173,9 @@ class _NewHomeState extends State<NewHome> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(60.0),
-          child:
-          AppBar(title: Text('Freinar Express'), backgroundColor: kMainColor, )
+            preferredSize: Size.fromHeight(60.0),
+            child:
+            AppBar(title: Text('Freinar Express'), backgroundColor: kMainColor,)
 
           /* CustomAppBar(
             leading: Padding(
@@ -203,8 +211,14 @@ class _NewHomeState extends State<NewHome> {
           ), */
         ),
         body: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height,
             child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Column(
@@ -218,7 +232,8 @@ class _NewHomeState extends State<NewHome> {
                             children: <Widget>[
                               Text(
                                 "Nosotros",
-                                style: Theme.of(context)
+                                style: Theme
+                                    .of(context)
                                     .textTheme
                                     .bodyText1
                                     .copyWith(fontWeight: FontWeight.normal),
@@ -228,7 +243,10 @@ class _NewHomeState extends State<NewHome> {
                               ),
                               Text(
                                 "lo llevamos por ti",
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .bodyText1,
                               ),
                             ],
                           ),
@@ -236,7 +254,7 @@ class _NewHomeState extends State<NewHome> {
                       ),
                       Visibility(
                         visible:
-                            (!isFetch && listImage.length == 0) ? false : true,
+                        (!isFetch && listImage.length == 0) ? false : true,
                         child: Padding(
                           padding: EdgeInsets.only(top: 10, bottom: 5),
                           child: CarouselSlider(
@@ -249,78 +267,83 @@ class _NewHomeState extends State<NewHome> {
                                 reverse: false,
                                 autoPlayInterval: Duration(seconds: 3),
                                 autoPlayAnimationDuration:
-                                    Duration(milliseconds: 800),
+                                Duration(milliseconds: 800),
                                 autoPlayCurve: Curves.fastOutSlowIn,
                                 scrollDirection: Axis.horizontal,
                               ),
                               items: (listImage != null && listImage.length > 0)
                                   ? listImage.map((e) {
-                                      return Builder(
-                                        builder: (context) {
-                                          return InkWell(
-                                            onTap: () {},
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 5, vertical: 10),
-                                              child: Material(
-                                                elevation: 5,
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                                clipBehavior: Clip.hardEdge,
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.90,
+                                return Builder(
+                                  builder: (context) {
+                                    return InkWell(
+                                      onTap: () {},
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 5, vertical: 10),
+                                        child: Material(
+                                          elevation: 5,
+                                          borderRadius:
+                                          BorderRadius.circular(20.0),
+                                          clipBehavior: Clip.hardEdge,
+                                          child: Container(
+                                            width: MediaQuery
+                                                .of(context)
+                                                .size
+                                                .width *
+                                                0.90,
 //                                            padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                                                  decoration: BoxDecoration(
-                                                    color: white_color,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20.0),
-                                                  ),
-                                                  child: Image.network(
-                                                    imageBaseUrl +
-                                                        e.banner_image,
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                ),
-                                              ),
+                                            decoration: BoxDecoration(
+                                              color: white_color,
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  20.0),
                                             ),
-                                          );
-                                        },
-                                      );
-                                    }).toList()
+                                            child:Image.asset('images/'+e.banner_image, fit: BoxFit.fill,)
+                                            /* Image.network(
+                                              imageBaseUrl +
+                                                  e.banner_image,
+                                              fit: BoxFit.fill,
+                                            ),
+
+                                             */
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }).toList()
                                   : listImages.map((e) {
-                                      return Builder(builder: (context) {
-                                        return Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.90,
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 5.0),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                          ),
-                                          child: Shimmer(
-                                            duration: Duration(seconds: 3),
-                                            //Default value
-                                            color: Colors.white,
-                                            //Default value
-                                            enabled: true,
-                                            //Default value
-                                            direction:
-                                                ShimmerDirection.fromLTRB(),
-                                            //Default Value
-                                            child: Container(
-                                              color: kTransparentColor,
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                    }).toList()),
+                                return Builder(builder: (context) {
+                                  return Container(
+                                    width: MediaQuery
+                                        .of(context)
+                                        .size
+                                        .width *
+                                        0.90,
+                                    margin: EdgeInsets.symmetric(
+                                        horizontal: 5.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                      BorderRadius.circular(20.0),
+                                    ),
+                                    child: Shimmer(
+                                      duration: Duration(seconds: 3),
+                                      //Default value
+                                      color: Colors.white,
+                                      //Default value
+                                      enabled: true,
+                                      //Default value
+                                      direction:
+                                      ShimmerDirection.fromLTRB(),
+                                      //Default Value
+                                      child: Container(
+                                        color: kTransparentColor,
+                                      ),
+                                    ),
+                                  );
+                                });
+                              }).toList()),
                         ),
                       ),
                       SizedBox(
@@ -376,6 +399,36 @@ class _NewHomeState extends State<NewHome> {
                             ),
                           ))
                     ]))));
+  }
+
+  void firebaseMessagingListner() async {
+    if (Platform.isIOS) iosPermission();
+    firebaseMessaging.getToken().then((value) {
+      setState(() {
+        firebaseToken = value;
+      });
+      registerDevice(value);
+    });
+  }
+
+  void iosPermission() {
+    firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(sound: true, badge: true, alert: true));
+    firebaseMessaging.onIosSettingsRegistered.listen((event) {});
+  }
+
+
+  registerDevice(String firebaseTokenR) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var url = deviceToken;
+    http.post(url, body: {
+      'device_token': firebaseTokenR,
+    }, headers: {'Accept': 'Application/json',
+    'Authorization': 'Bearer ' + prefs.getString('api_token')
+    }).then((value) {
+      print(value);
+      prefs.setString('device_token', firebaseTokenR);
+    });
   }
 
   void hitService() async {
@@ -478,7 +531,7 @@ class _NewHomeState extends State<NewHome> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              // builder: (context) => ParcalStoresPage('${vendor_category_id}')));
+            // builder: (context) => ParcalStoresPage('${vendor_category_id}')));
               builder: (context) => ParcalStoresPage()));
     }
   }

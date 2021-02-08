@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -409,19 +410,21 @@ class _RegisterFormState extends State<RegisterForm> {
       var phoneNumber = prefs.getString('user_phone');
       var url = registerApi;
       http.post(url, body: {
-        'user_name': name,
-        'user_email': email,
-        'user_phone': phoneNumber,
-        'user_password': 'no',
-        'device_id': '${token}',
-        'user_image': 'usre.png'
-      }).then((value) {
+        'name': name,
+        'email': email,
+        'password': password,
+        'password_confirmation':  confirmPass
+      }, headers: {'Accept': 'Application/json'}).then((value) {
         print('Response Body: - ${value.body.toString()}');
         if (value.statusCode == 200) {
+          var jsonData = jsonDecode(value.body);
+
+          prefs.setString("api_token", jsonData['api_token']);
+          prefs.setBool("islogin", true);
           setState(() {
             showDialogBox = false;
           });
-          Navigator.pushNamed(context, LoginRoutes.verification);
+          Navigator.popAndPushNamed(context, LoginRoutes.homepage);
         }
       });
     } else {

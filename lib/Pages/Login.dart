@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -218,8 +220,38 @@ class _Logintate extends State<Login> {
     );
   }
 
-  void login(String email, String pssw, BuildContext context) {
-    Navigator.popAndPushNamed(context, LoginRoutes.homepage);
+  void login(String email, String pssw, BuildContext context) async {
+    if (token != null && token.toString().length > 0) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var url = loginRoute;
+      http.post(url, body: {
+        'email': email,
+        'password': pssw
+      }, headers: {'Accept': 'Application/json'}).then((value) {
+        print('Response Body: - ${value.body.toString()}');
+        var jsonData = jsonDecode(value.body);
+        if (value.statusCode == 200) {
+          prefs.setString("api_token", jsonData['api_token']);
+          prefs.setBool("islogin", true);
+          setState(() {
+            showDialogBox = false;
+          });
+          Navigator.popAndPushNamed(context, LoginRoutes.homepage);
+        } else {
+          print(jsonData['message']);
+          Toast.show('Datos Incorrectos', context,
+              duration: Toast.LENGTH_SHORT);
+        }
+      });
+    } else {
+      firebaseMessaging.getToken().then((value) {
+        setState(() {
+          token = value;
+        });
+        print('${value}');
+        login(email, pssw, context);
+      });
+    }
   }
 
   void hitService(String name, String email, BuildContext context) async {
